@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"jex/cn/longGo/fb/GeoIP"
+	"jex/cn/longGo/fb/geoIP"
 )
 
 func main() {
