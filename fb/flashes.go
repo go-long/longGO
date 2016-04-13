@@ -1,7 +1,7 @@
 package fb
 
 import (
-	"jex/cn/longGo/fb/middleware/session"
+	"github.com/go-long/longGO/fb/middleware/session"
 	"encoding/gob"
 )
 

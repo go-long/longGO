@@ -56,9 +56,9 @@
 package i18n
 
 import (
-	"jex/cn/longGo/fb/i18n/bundle"
-	"jex/cn/longGo/fb/i18n/language"
-	"jex/cn/longGo/fb/i18n/translation"
+	"github.com/go-long/longGO/fb/i18n/bundle"
+	"github.com/go-long/longGO/fb/i18n/language"
+	"github.com/go-long/longGO/fb/i18n/translation"
 "strings"
 )
 

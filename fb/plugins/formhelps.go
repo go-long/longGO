@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"jex/cn/longGo/fb"
+	"github.com/go-long/longGO/fb"
 	"reflect"
 	"github.com/coscms/forms"
 	"github.com/coscms/forms/common"

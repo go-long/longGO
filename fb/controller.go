@@ -10,19 +10,19 @@ import (
 
 	"github.com/labstack/echo"
 
-	"jex/cn/longGo/fb/render"
+	"github.com/go-long/longGO/fb/render"
 	"net/http"
 
 
 	"runtime"
 	"strings"
 	"path/filepath"
-"jex/cn/longGo/fb/middleware/session"
+"github.com/go-long/longGO/fb/middleware/session"
 
-	"jex/cn/longGo/fb/funcMap"
-	"jex/cn/longGo/fb/i18n"
+	"github.com/go-long/longGO/fb/funcMap"
+	"github.com/go-long/longGO/fb/i18n"
 	"path"
-"jex/cn/longGo/fb/i18n/language"
+"github.com/go-long/longGO/fb/i18n/language"
 
 )
 

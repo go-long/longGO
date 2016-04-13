@@ -9,8 +9,8 @@ import (
 
 	"path/filepath"
 
-	"jex/cn/longGo/fb/i18n/language"
-	"jex/cn/longGo/fb/i18n/translation"
+	"github.com/go-long/longGO/fb/i18n/language"
+	"github.com/go-long/longGO/fb/i18n/translation"
 )
 
 // TranslateFunc is a copy of i18n.TranslateFunc to avoid a circular dependency.

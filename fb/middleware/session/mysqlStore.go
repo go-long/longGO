@@ -2,7 +2,7 @@ package session
 
 import (
 	"github.com/gorilla/sessions"
-	"jex/cn/longGo/fb/middleware/session/store/mysql"
+	"github.com/go-long/longGO/fb/middleware/session/store/mysql"
 	"database/sql"
 )
 

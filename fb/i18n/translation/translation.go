@@ -4,7 +4,7 @@ package translation
 import (
 	"fmt"
 
-	"jex/cn/longGo/fb/i18n/language"
+	"github.com/go-long/longGO/fb/i18n/language"
 )
 
 // Translation is the interface that represents a translated string.

@@ -1,7 +1,7 @@
 package translation
 
 import (
-	"jex/cn/longGo/fb/i18n/language"
+	"github.com/go-long/longGO/fb/i18n/language"
 )
 
 type singleTranslation struct {

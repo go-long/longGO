@@ -9,9 +9,9 @@ import (
 	"strings"
 
 
-	"jex/cn/longGo/fb/goIni"
+	"github.com/go-long/longGO/fb/goIni"
 "github.com/labstack/gommon/log"
-	"jex/cn/longGo/fb/db"
+	"github.com/go-long/longGO/fb/db"
 )
 
 type (
