@@ -85,6 +85,9 @@ var helperFuncs = template.FuncMap{
 	"current": func() (string, error) {
 		return "", nil
 	},
+	"defaultSubLayout": func() (string, error) {
+		return "", fmt.Errorf("default called with no sublayout defined")
+	},
 }
 
 // Render is a service that can be injected into a Martini handler. Render provides functions for easily writing JSON and
@@ -281,7 +284,7 @@ func compile(options Options) *template.Template {
 	t := template.New(dir)
 	t.Delims(options.Delims.Left, options.Delims.Right)
 	// parse an initial template in case we don't have any
-	template.Must(t.Parse("Martini"))
+	template.Must(t.Parse("longgo"))
 
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		r, err := filepath.Rel(dir, path)
@@ -366,6 +369,7 @@ func (r *Renderer) HTML(status int, name string, binding interface{}, htmlOpt ..
 		r.addYield(name, binding)
 		name = opt.Layout
 	}
+
 
 	buf, err := r.execute(name, binding)
 	if err != nil {
@@ -470,6 +474,8 @@ func (r *Renderer) execute(name string, binding interface{}) (*bytes.Buffer, err
 	return buf, r.t.ExecuteTemplate(buf, name, binding)
 }
 
+
+
 func (r *Renderer) addYield(name string, binding interface{}) {
 	funcs := template.FuncMap{
 		"yield": func() (template.HTML, error) {
@@ -480,6 +486,20 @@ func (r *Renderer) addYield(name string, binding interface{}) {
 		"current": func() (string, error) {
 			return name, nil
 		},
+		"defaultSubLayout": func()(template.HTML, error) {
+			ls:=strings.Split(name,"/")
+			ls[len(ls)-1]="default"
+			defaultSubLayout:=strings.Join(ls,"/")
+
+			if r.t.Lookup(defaultSubLayout)!=nil{
+				buf, err := r.execute(defaultSubLayout, binding)
+				return template.HTML(buf.String()), err
+			}else{
+				buf, err := r.execute(name, binding)
+				return template.HTML(buf.String()), err
+			}
+		},
+
 	}
 	r.t.Funcs(funcs)
 }
