@@ -124,7 +124,7 @@ func mapForm(ptr interface{}, form map[string][]string,baseName string) error {
 			}
 
 			inputFieldName = fName
-fmt.Println("name:",fName)
+
 			// if "form" tag is nil, we inspect if the field is a struct.
 			// this would not make sense for JSON parsing but it does for a form
 			// since data is flatten
