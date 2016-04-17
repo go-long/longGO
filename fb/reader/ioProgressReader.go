@@ -3,7 +3,7 @@ package reader
 import (
 	"io"
 	"time"
-        "jex/cn/longGo/fb/utils"
+"github.com/go-long/longGO/fb/utils"
 )
 
 type ProgressReaderCallbackFunc  func(int64, int64,string) error
