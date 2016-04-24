@@ -220,6 +220,10 @@ func setUintField(val string, bitSize int, field reflect.Value) error {
 }
 
 func setBoolField(val string, field reflect.Value) error {
+	if strings.ToLower(val) == "on" ||  strings.ToLower(val) == "yes" {
+		val="true"
+	}
+
 	if val == "" {
 		val = "false"
 	}
