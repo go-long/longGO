@@ -14,25 +14,25 @@ func GetCookie(c echo.Context)*ICookie{
 	return &ICookie{c}
 }
 
-func (this *ICookie)SetCookie(key interface{}, val interface{}){
+func (this *ICookie)Set(key interface{}, val interface{}){
 	session := session.Default(this.ctx)
 	session.Set(key,val)
 	session.Save()
 }
 
-func (this *ICookie)Cookie(key interface{}) interface{}{
+func (this *ICookie)Get(key interface{}) interface{}{
 	session := session.Default(this.ctx)
 	return session.Get(key)
 }
 
-func (this *ICookie)DelCookie(key interface{}){
+func (this *ICookie)Del(key interface{}){
 	fmt.Println("ctx:",this.ctx)
 	session := session.Default(this.ctx)
         session.Delete(key)
 
 }
 
-func (this *ICookie)ClearCookie(){
+func (this *ICookie)Clear(){
 	session := session.Default(this.ctx)
 	session.Clear()
 }
