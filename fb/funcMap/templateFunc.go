@@ -2,7 +2,7 @@ package funcMap
 
 import (
 	"html/template"
-"github.com/go-long/longGO/fb/i18n"
+"github.com/go-long/i18n"
 )
 
 var (

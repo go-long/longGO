@@ -15,11 +15,9 @@ import (
 	mdw "github.com/go-long/longGO/fb/middleware"
 	"github.com/go-long/longGO/fb/middleware/session"
 	"net/http"
-	"github.com/go-long/longGO/fb/i18n"
+	"github.com/go-long/i18n"
 	"github.com/go-long/longGO/fb/funcMap"
 	"github.com/labstack/gommon/log"
-
-	"os"
 
 )
 
@@ -92,7 +90,6 @@ func newLongGo() *Long{
 
 	//t.Echo.Blackfile(".html")
 
-
 	t.Echo.SetDebug(t.Config.Env == ENV_DEVEL)
 
 	t.renderer = render.NewRenderer(render.Options{
@@ -109,14 +106,15 @@ func newLongGo() *Long{
 	// t.Echo.SetHTTPErrorHandler(h HTTPErrorHandler)
 
 	Log.SetLevel(t.Config.LogLevel)
+	Log.EnableColor()
 	Log.SetFormat("${prefix}|${level}|${message}\n")
         t.Echo.SetLogger(Log)
 	t.Echo.SetHTTPErrorHandler(t.httpErrorHandler)
 
 	t.Echo.SetBinder(&binder{})
-	loadLanguages("i18n");
-	funcMap.AddFuncMap("Languages",  i18n.Languages)
-	funcMap.AddFuncMap("LanguageTemplate",i18n.LanguageTemplate)
+	i18n.Init("i18n","zh-cn");
+	funcMap.AddFuncMap("Languages",  i18n.Translations)
+	//funcMap.AddFuncMap("LanguageTemplate",i18n.LanguageTemplate)
 	return t
 }
 
@@ -126,7 +124,7 @@ func (this *Long)SessionStore(store session.Store){
 	this.sessionStore=store
 }
 
-func (this *Long) Run(mw... echo.MiddlewareFunc ) {
+func (this *Long) Run(onBeforeRuning func(),mw... echo.MiddlewareFunc ) {
 
 	DB.Init(this.DBConfig)
 	//this.DB.DB.SetLogger(this.log)
@@ -153,11 +151,11 @@ func (this *Long) Run(mw... echo.MiddlewareFunc ) {
 
 	//查看模版路径列表
 	for _, t := range this.renderer.Template().Templates() {
-		Log.Debug("template|", t.Name())
+		Log.Infof("%s%s", color.Blue("template|"), color.Green(t.Name()))
 	}
 
 	//查看路由列表
-	Log.Info("Routes:")
+	Log.Infof(color.CyanBg(color.Yellow("Routes:")))
 	for _, r := range this.Echo.Routes() {
 		Log.Infof("%s %s %s", color.Blue(r.Method), color.Green(r.Path), r.Handler)
 	}
@@ -165,6 +163,11 @@ func (this *Long) Run(mw... echo.MiddlewareFunc ) {
 	//启动服务
 	serverEng := standard.New(fmt.Sprintf("%s:%d", this.Config.HttpAddr, this.Config.HttpPort))
 	Log.Debugf("%s %s:%d", color.Yellow("Start httpService"), color.Green(this.Config.HttpAddr), this.Config.HttpPort)
+
+
+	if onBeforeRuning!=nil {
+		onBeforeRuning()
+	}
 	this.Echo.Run(serverEng)
 }
 
@@ -224,16 +227,6 @@ func (this *Long) httpErrorHandler(err error, c echo.Context) {
 
 }
 
-func loadLanguages(path string) error {
-	i18n.LanguageTags()
-	err := filepath.Walk(path, func(path string, f os.FileInfo, err error) error {
-		if ( f == nil ) {return err}
-		if f.IsDir() {return nil}
-		i18n.LoadTranslationFile(path)
-		return nil
-	})
-	return err;
-}
 
 //func (this *Long) Hook() {
 //	this.Echo.Hook(func(r engine.Request, w engine.Response) {
