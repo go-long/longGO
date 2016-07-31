@@ -1,10 +1,13 @@
 package s3
 
 import (
+	//"github.com/aws/aws-sdk-go/aws"
+	//"github.com/aws/aws-sdk-go/aws/session"
+	//"github.com/aws/aws-sdk-go/service/s3/s3manager"
+
 	"github.com/go-long/goamz/aws"
 	"github.com/go-long/goamz/s3"
 	"github.com/go-long/longGO/fb/reader"
-	"path/filepath"
 	"os"
 	"fmt"
 
@@ -28,6 +31,7 @@ type (
        }
 )
 
+//uploader := s3manager.NewUploader(session.New(&aws.Config{Region: aws.String("us-west-2")}))
 func NewS3Client(cnf Config,sliceSizeMB... int64)*S3Client{
 	auth := aws.Auth{
 		AccessKey: cnf.AccessKey,
@@ -71,7 +75,7 @@ func (s *S3Client) Bucket() (*s3.Bucket,error) {
 	return bucket,nil
 }
 
-func (s *S3Client) PutFile(filename string,progressFunc... reader.ProgressReaderCallbackFunc) error{
+func (s *S3Client) PutFile(filename string,key string,progressFunc... reader.ProgressReaderCallbackFunc) error{
 	f, er := os.Stat(filename)
 	if er != nil {
 		return  er
@@ -91,8 +95,8 @@ func (s *S3Client) PutFile(filename string,progressFunc... reader.ProgressReader
 	defer afile.Close()
 
 
-	shortName:=filepath.Base(filename)
-	fmt.Println("short:",shortName)
+	//shortName:=filepath.Base(filename)
+	//fmt.Println("short:",shortName)
 	progressR := &reader.ReaderSeek{
 		Reader: afile,
 		Size:   f.Size(),
@@ -102,15 +106,17 @@ func (s *S3Client) PutFile(filename string,progressFunc... reader.ProgressReader
 		progressR.DrawFunc=progressFunc[0]
 	}
 
+	fmt.Println("s3 upload key:",key)
 
-	if f.Size()>1*1024*1024{// *1024{
+	if f.Size()>64*1024*1024{// *1024{
 		fmt.Println("s3 Multi Upload")
-		//文件大于5G,必须Multi方式
-		multi, err := b.InitMulti(shortName, "application/octet-stream", s3.ACL(s.config.Acl))
+		//文件大于64M,必须Multi方式
+		multi, err := b.InitMulti(key, "application/octet-stream", s3.ACL(s.config.Acl))
 		if err != nil {
 			return err
 		}
 		defer multi.Abort()
+
 		parts, err1 := multi.PutAll(progressR, s.sliceSize)
 		if err1 != nil {
 			return err1
@@ -121,8 +127,7 @@ func (s *S3Client) PutFile(filename string,progressFunc... reader.ProgressReader
 		}
 		return   multi.Complete(parts)
 	} else {
-		fmt.Println("ddddd")
-		err = b.PutReader(shortName, progressR, f.Size(), "application/octet-stream", s3.ACL(s.config.Acl))
+		err = b.PutReader(key, progressR, f.Size(), "application/octet-stream", s3.ACL(s.config.Acl))
 		//err = b.Put("zoujtw2015-12-16.mkv", file, "content-type", s3.PublicReadWrite)
 		if err != nil {
 			return err

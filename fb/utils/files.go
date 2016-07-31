@@ -3,7 +3,25 @@ package utils
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
+
+//获取程序路径
+func GetAppDirectory(joinPath ...string)string{
+	path, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return ""
+	}
+	path= strings.Replace(path, "\\", "/", -1)
+
+	if len(joinPath)>0 {
+		var paths []string
+		paths=append(paths,path)
+		paths=append(paths,joinPath...)
+		path=filepath.Join( paths...)
+	}
+	return path
+}
 
 //获取工作路径
 func GetWokingDirectory(joinPath ...string) string{
@@ -32,4 +50,11 @@ func GetDirectoryFiles(root string) (files []os.FileInfo, err error){
 			return nil
 		})
 	return files,err
+}
+
+// 检查文件或目录是否存在
+// 如果由 filename 指定的文件或目录存在则返回 true，否则返回 false
+func FileExist(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil || os.IsExist(err)
 }

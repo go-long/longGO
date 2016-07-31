@@ -7,9 +7,11 @@ import (
 	"image/png"
 	"io"
 	"math/rand"
-	"net/http"
 	"strconv"
 	"time"
+	"github.com/go-long/longGO/fb"
+	"github.com/labstack/echo/engine/standard"
+	"fmt"
 )
 const (
 	stdWidth  = 100
@@ -350,16 +352,34 @@ func NewLenChars(length int, chars []byte) string {
 	}
 	panic("unreachable")
 }
-func Pic(w http.ResponseWriter, req *http.Request) string {
-	d := make([]byte, 4)
-	s := NewLen(4)
-	ss := ""
-	d = []byte(s)
-	for v := range d {
-		d[v] %= 10
-		ss += strconv.FormatInt(int64(d[v]), 32)
+func Pic(controller *fb.BaseController){
+        w:=controller.Response().(*standard.Response).ResponseWriter
+        code:=controller.Request().URL().QueryParam("code")
+	if len(code)>0 {
+		//验证 使用 ?code=xxx
+		if Validator(controller,code) {
+			controller.Response().WriteHeader(200)
+			return
+		}else{
+			controller.Response().WriteHeader(400)
+			return
+		}
+	}else {
+		d := make([]byte, 4)
+		s := NewLen(4)
+		ss := ""
+		d = []byte(s)
+		for v := range d {
+			d[v] %= 10
+			ss += strconv.FormatInt(int64(d[v]), 32)
+		}
+		fmt.Println("write code:",ss)
+		controller.Response().Header().Set("Content-Type", "image/png")
+		controller.Cookie.Set("CaptchaCode", ss)
+		NewImage(d, 100, 40).WriteTo(w)
 	}
-	w.Header().Set("Content-Type", "image/png")
-	NewImage(d, 100, 40).WriteTo(w)
-	return ss
+}
+
+func Validator(controller *fb.BaseController,code string) bool {
+	return  controller.Cookie.Get("CaptchaCode").(string)==code
 }

@@ -21,7 +21,6 @@ import (
 	"math"
 	"math/rand"
 	"time"
-	"strconv"
 )
 
 const (
@@ -44,6 +43,7 @@ var (
 
 // UUID is an alias of an int64 that is json marshalled into a base62 encoded uuid
 type UUID uint64
+
 
 // Encode encodes the uuid into a base62 string
 func (t UUID) Encode() string {
@@ -122,10 +122,6 @@ func NewUUID(uuidLength ...int) UUID {
 	number := uint64(rand.Int63n(int64(max & math.MaxInt64)))
 
 	return UUID(number)
-}
-
-func (t UUID)String()string{
-	return strconv.FormatUint(uint64(t),16)
 }
 
 // Decode returns a uuid from a 1-12 character base62 encoded string

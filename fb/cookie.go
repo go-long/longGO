@@ -29,10 +29,11 @@ func (this *ICookie)Del(key interface{}){
 	fmt.Println("ctx:",this.ctx)
 	session := session.Default(this.ctx)
         session.Delete(key)
-
+	session.Save()
 }
 
 func (this *ICookie)Clear(){
 	session := session.Default(this.ctx)
 	session.Clear()
+	session.Save()
 }

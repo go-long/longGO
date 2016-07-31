@@ -19,7 +19,7 @@ type (
 	AppName       string // 应用名称
 	Env           string   // 运行模式
 	Version       string //版本
-	LogLevel      uint8
+	LogLevel      log.Lvl
 	HttpAddr      string // 应用监听地址，默认为空，监听所有的网卡 IP
 	HttpPort      int    // 应用监听端口，默认为 8080
 	//TplSuffix     string // 模板后缀名
@@ -59,8 +59,8 @@ func getConfig() Config {
         return *cnf
 }
 
-func strToLogLevel(logLevelstr string)uint8{
-	var logLevel uint8
+func strToLogLevel(logLevelstr string)log.Lvl{
+	var logLevel log.Lvl
 
 	switch strings.ToUpper(logLevelstr) {
 	//case "TRACE":

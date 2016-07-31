@@ -6,15 +6,19 @@ import (
 "github.com/go-long/longGO/fb/utils"
 )
 
-type ProgressReaderCallbackFunc  func(int64, int64,string) error
 
+type ReaderAtSeeker interface {
+	io.ReaderAt
+	io.ReadSeeker
+}
 
 // Reader is an implementation of io.Reader that draws the progress of
 // reading some data.
-type Reader struct {
+type ReaderSeek struct {
 	// Reader is the underlying reader to read from
-	 Reader io.Reader
-
+	//Reader io.Reader
+	Reader ReaderAtSeeker
+	//io.ReadSeeker
 
 	// Size is the total size of the data coming out of the reader.
 	Size int64
@@ -33,11 +37,37 @@ type Reader struct {
 	lastProgress int64
 }
 
+func (r *ReaderSeek) ReadAt(p []byte, off int64) (n int, err error){
+	// If we haven't drawn before, initialize the progress bar
+	if r.lastDraw.IsZero() {
+		r.initProgress()
+	}
 
+	// Read from the underlying source
+	n, err = r.Reader.ReadAt(p,off)
+
+	// Always increment the progress even if there was an error
+	r.progress = int64(n)+off
+
+	// If we don't have any errors, then draw the progress. If we are
+	// at the end of the data, then finish the progress.
+	if err == nil {
+		// Only draw if we read data or we've never read data before (to
+		// initialize the progress bar).
+		if n > 0 {
+			r.drawProgress()
+		}
+	}
+	if err == io.EOF {
+		r.finishProgress()
+	}
+
+	return n, err
+}
 // Read reads from the underlying reader and invokes the DrawFunc if
 // appropriate. The DrawFunc is executed when there is data that is
 // read (progress is made) and at least DrawInterval time has passed.
-func (r *Reader) Read(p []byte) (int, error) {
+func (r *ReaderSeek) Read(p []byte) (int, error) {
 	// If we haven't drawn before, initialize the progress bar
 	if r.lastDraw.IsZero() {
 		r.initProgress()
@@ -65,9 +95,11 @@ func (r *Reader) Read(p []byte) (int, error) {
 	return n, err
 }
 
+func (r *ReaderSeek)Seek(offset int64, whence int) (int64, error){
+	return r.Reader.Seek(offset,whence)
+}
 
-
-func (r *Reader) drawProgress() {
+func (r *ReaderSeek) drawProgress() {
 	// If we've drawn before, then make sure that the draw interval
 	// has passed before we draw again.
 	interval := r.DrawInterval
@@ -91,7 +123,7 @@ func (r *Reader) drawProgress() {
 	r.lastProgress =r.progress
 }
 
-func (r *Reader) finishProgress() {
+func (r *ReaderSeek) finishProgress() {
 	// Only output the final draw if we drawed prior
 	if !r.lastDraw.IsZero() {
 		f := r.drawFunc()
@@ -106,14 +138,14 @@ func (r *Reader) finishProgress() {
 	}
 }
 
-func (r *Reader) initProgress() {
+func (r *ReaderSeek) initProgress() {
 	var zeroDraw time.Time
 	r.lastDraw = zeroDraw
 	r.drawProgress()
 	r.lastDraw = zeroDraw
 }
 
-func (r *Reader) drawFunc() ProgressReaderCallbackFunc {
+func (r *ReaderSeek) drawFunc() ProgressReaderCallbackFunc {
 //	if r.DrawFunc == nil {
 //		return defaultDrawFunc
 //	}

@@ -429,7 +429,7 @@ func (r *Renderer) Download(file string,filename ...string ) {
 	r.Header().Set("Cache-Control", "must-revalidate")
 	r.Header().Set("Pragma", "public")
 
-	//http.ServeFile(r.Writer(),r.Req,file)
+ 	http.ServeFile(r.Response.(* standard.Response).ResponseWriter,r.Req.(*standard.Request).Request,file)
 
 
 }

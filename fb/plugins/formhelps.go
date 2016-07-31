@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"github.com/coscms/forms"
 	"github.com/coscms/forms/common"
+	"github.com/labstack/echo/engine/standard"
 )
 
 type (
@@ -18,7 +19,8 @@ type (
      FuncHandle  func (*FormEditorConfig)
 )
 
-func LongFormEditor(conf *FormEditorConfig) *forms.Form{
+func LongFormEditor(conf *FormEditorConfig) (form *forms.Form,postSuccess bool){
+	postSuccess=false;
 	controller:=conf.Controller.Object()
 
 	if conf.ID>0 {
@@ -36,7 +38,7 @@ func LongFormEditor(conf *FormEditorConfig) *forms.Form{
 
 	}
 
-	form := forms.NewFormFromModel(conf.DBModel, formcommon.BOOTSTRAP, "POST",controller.Request().URI())
+	form = forms.NewFormFromModel(conf.DBModel, formcommon.BOOTSTRAP, "POST",controller.Request().URI())
 	form.SetId("agentSvrEditForm")
 	form.Field("submit").SetText("提交更改")
 	form.Field("reset").SetText("关闭")
@@ -52,6 +54,7 @@ func LongFormEditor(conf *FormEditorConfig) *forms.Form{
 			controller.Data["valid"] = valid;
 			fb.Log.Debug(valid)
 			controller.Flash.Error("提交失败")
+			controller.Redirect(302,controller.Request().(*standard.Request).RequestURI)
 		} else {
 			//			fmt.Println("tmp_user:",tmp_user)
 			var err error
@@ -63,11 +66,13 @@ func LongFormEditor(conf *FormEditorConfig) *forms.Form{
 			if err!=nil{
 				fb.Log.Error(err)
 				controller.Flash.Error("保存失败："+err.Error())
+				controller.Redirect(302,controller.Request().(*standard.Request).RequestURI)
 			}else{
 				controller.Flash.Success("修改成功")
+				postSuccess=true;
 			}
 		}
 	}
 
-	return form
+	return 
 }

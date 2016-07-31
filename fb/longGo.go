@@ -107,7 +107,7 @@ func newLongGo() *Long{
 
 	Log.SetLevel(t.Config.LogLevel)
 	Log.EnableColor()
-	Log.SetFormat("${prefix}|${level}|${message}\n")
+	Log.SetHeader("${prefix}|${level}|${message}\n")
         t.Echo.SetLogger(Log)
 	t.Echo.SetHTTPErrorHandler(t.httpErrorHandler)
 
@@ -185,6 +185,11 @@ func (this *Long)setModuesStaticRoutes() {
 	this.Echo.Static("/favicon",filepath.Join(MODULES_PACKAGE, APP_PACKAGE, PUBLIC_PACKAGE, "favicon"))
 	//this.Echo.Favicon(filepath.Join(MODULES_PACKAGE, APP_PACKAGE, PUBLIC_PACKAGE, "favicon", "favicon.ico"))
 	this.Echo.Static("/uploads", UPLOADS_PACKAGE)
+	this.Echo.Static("/static", "static")
+	if this.Config.Env == ENV_DEVEL {
+		this.Echo.Static("/swagger", "swagger")
+	}
+
 
 
 	for name, m := range Modules {
@@ -216,6 +221,7 @@ func (this *Long) httpErrorHandler(err error, c echo.Context) {
 	switch code {
 	case http.StatusNotFound:
 	     //404
+		//fmt.Println("url:",c.Request().URI())
 		 c.File(filepath.Join(MODULES_PACKAGE,APP_PACKAGE, PUBLIC_PACKAGE,VIEW_PACKAGE,"404.html"))
 	default:
 		if !c.Response().Committed() {

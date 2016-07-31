@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
-
+	"strconv"
 	"github.com/labstack/echo"
 //	"github.com/labstack/echo/middleware"
 	"reflect"
@@ -28,11 +28,12 @@ type(
 		mw          []echo.MiddlewareFunc
 		Routes      []LongRoute
 	}
+
 	LongRoute struct {
 		Method  string
 		Path    string
 		Handler string
-		Des     string
+		Tags    string
 	}
 )
 
@@ -46,6 +47,61 @@ const (
 	PERMISSION_USER
 	PERMISSION_ADMIN
 )
+
+func (lr *LongRoute)Desc()string{
+	return lr.Tag("desc")
+}
+
+func (lr *LongRoute)Tag(key string)string{
+	tag:=lr.Tags
+	for tag != "" {
+		// Skip leading space.
+		i := 0
+		for i < len(tag) && tag[i] == ' ' {
+			i++
+		}
+		tag = tag[i:]
+		if tag == "" {
+			break
+		}
+
+
+		i = 0
+		for i < len(tag) && tag[i] > ' ' && tag[i] != ':' && tag[i] != '"' && tag[i] != 0x7f {
+			i++
+		}
+		if i == 0 || i+1 >= len(tag) || tag[i] != ':' || tag[i+1] != '"' {
+			break
+		}
+		name := string(tag[:i])
+		tag = tag[i+1:]
+
+		// Scan quoted string to find value.
+		i = 1
+		for i < len(tag) && tag[i] != '"' {
+			if tag[i] == '\\' {
+				i++
+			}
+			i++
+		}
+		if i >= len(tag) {
+			break
+		}
+		qvalue := string(tag[:i+1])
+		tag = tag[i+1:]
+
+		if key == name {
+			value, err := strconv.Unquote(qvalue)
+			if err != nil {
+				break
+			}
+			return value
+		}
+	}
+	return ""
+}
+
+
 
 // 创建模块
 // 自动设置default主题
@@ -171,8 +227,8 @@ func (this *Module)addRoute(c Controller, route echo.Route, m ...echo.Middleware
 			v.Interface().(Controller).Object().module = this
 
 			//初始化Context
-			v.Interface().(Controller).AutoInit(ctx)
-
+			v.Interface().(Controller).autoInit(ctx,route.Handler)
+		        v.Interface().(Controller).Init()
 
 			//运行页面处理函数
 			rets := v.MethodByName(route.Handler).Call([]reflect.Value{})
@@ -260,5 +316,6 @@ func (this *Module) Router(rootpath string,c Controller,routes []LongRoute, m ..
 //}
 //	return this
 //}
+
 
 
