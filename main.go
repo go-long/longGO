@@ -1,7 +1,7 @@
 package main
 
 import (
-	"jex/cn/longGo/deploy"
+	"github.com/go-long/longGO/deploy"
 	_ "github.com/mattn/go-colorable"
 )
 

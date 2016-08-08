@@ -3,6 +3,7 @@ package fb
 import (
 	"github.com/go-long/longGO/fb/middleware/session"
 	"encoding/gob"
+	"sync"
 )
 
 
@@ -44,6 +45,10 @@ func (this *Flash)Info(value string) {
 
 func (this *Flash)Flashes() []FlashMessage {
 	var datas []FlashMessage
+	  lock := new(sync.RWMutex)
+	lock.RLock()
+	defer lock.RUnlock()
+
 	for _, v := range this.session.Flashes() {
 		datas = append(datas, v.(FlashMessage))
 	}
