@@ -20,25 +20,25 @@ type (
 )
 
 func (this *Flash)Success(value string) {
-	data := &FlashMessage{Type:"Success", Message:value}
+	data := FlashMessage{Type:"Success", Message:value}
 	this.session.AddFlash(data)
 	this.session.Save()
 }
 
 func (this *Flash)Error(value string) {
-	data := &FlashMessage{Type:"Error", Message:value}
+	data := FlashMessage{Type:"Error", Message:value}
 	this.session.AddFlash(data)
 	this.session.Save()
 }
 
 func (this *Flash)Warning(value string) {
-	data := &FlashMessage{Type:"Warning", Message:value}
+	data := FlashMessage{Type:"Warning", Message:value}
 	this.session.AddFlash(data)
 	this.session.Save()
 }
 
 func (this *Flash)Info(value string) {
-	data := &FlashMessage{Type:"Info", Message:value}
+	data := FlashMessage{Type:"Info", Message:value}
 	this.session.AddFlash(data)
 	this.session.Save()
 }
