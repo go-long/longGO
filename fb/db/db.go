@@ -57,11 +57,22 @@ func (this *LongDB)Init(cnf Config)*LongDB{
 			cnf.Host,
 			cnf.DataSourceName,
 			cnf.Encoding))
+		//创建数据库
+		this.DB.Debug().Exec("CREATE DATABASE IF NOT EXISTS `"+cnf.DataSourceName+"` DEFAULT CHARSET utf8 COLLATE utf8_general_ci;")
+
+		//db, err := sql.Open("mysql", "user:password@tcp(localhost:5555)/dbname?charset=utf8&parseTime=True&loc=Local")
+		this.DB, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s&parseTime=True&loc=Local",
+			cnf.UserName,
+			cnf.Password,
+			cnf.Host,
+			cnf.DataSourceName,
+			cnf.Encoding))
 		//logger.CheckFatal(err,"Got error when connect database")
 		if err!=nil{
 			fmt.Println("db open faild:",err)
 
 		}
+
 
 	//this.DbMap = &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	default:
