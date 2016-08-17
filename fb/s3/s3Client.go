@@ -9,6 +9,7 @@ import (
 	"github.com/go-long/goamz/s3"
 	"github.com/go-long/longGO/fb/reader"
 	"os"
+	"time"
 	"fmt"
 
 )
@@ -136,3 +137,12 @@ func (s *S3Client) PutFile(filename string,key string,progressFunc... reader.Pro
 	return nil
 }
 
+
+func (s *S3Client)GetSignedURL(path string,duration time.Duration)string{
+	  b,err:=s.Bucket()
+	if err!=nil{
+		fmt.Println("Bucket err:",err)
+	}
+	url:=b.SignedURL(path, time.Now().Add(duration))
+	return url
+}
