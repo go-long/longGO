@@ -5,19 +5,19 @@ import (
 	"path"
 //"regexp"
 	"path/filepath"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
-	"github.com/labstack/echo/engine/standard"
+	"github.com/go-long/echo"
+	"github.com/go-long/echo/middleware"
+	"github.com/go-long/echo/engine/standard"
 	"github.com/go-long/longGO/fb/render"
 
 	"github.com/go-long/longGO/fb/db"
-	"github.com/labstack/gommon/color"
+	"github.com/go-long/gommon/color"
 	mdw "github.com/go-long/longGO/fb/middleware"
 	"github.com/go-long/longGO/fb/middleware/session"
 	"net/http"
 	"github.com/go-long/i18n"
 	"github.com/go-long/longGO/fb/funcMap"
-	"github.com/labstack/gommon/log"
+	"github.com/go-long/gommon/log"
 
 )
 

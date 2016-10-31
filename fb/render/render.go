@@ -55,8 +55,8 @@ import (
 
 	//"github.com/go-martini/martini"
 
-	"github.com/labstack/echo/engine"
-	"github.com/labstack/echo/engine/standard"
+	"github.com/go-long/echo/engine"
+	"github.com/go-long/echo/engine/standard"
 )
 
 const (

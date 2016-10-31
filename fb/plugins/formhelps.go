@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"github.com/coscms/forms"
 	"github.com/coscms/forms/common"
-	"github.com/labstack/echo/engine/standard"
+	"github.com/go-long/echo/engine/standard"
 )
 
 type (

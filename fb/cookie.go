@@ -1,7 +1,7 @@
 package fb
 
 import (
-"github.com/labstack/echo"
+"github.com/go-long/echo"
 "github.com/go-long/longGO/fb/middleware/session"
 	"fmt"
 )

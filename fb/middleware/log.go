@@ -4,9 +4,9 @@ import (
 	"net"
 	"time"
 "strings"
-	"github.com/labstack/echo"
-	"github.com/labstack/gommon/color"
-	"github.com/labstack/echo/engine/standard"
+	"github.com/go-long/echo"
+	"github.com/go-long/gommon/color"
+	"github.com/go-long/echo/engine/standard"
 )
 
 var LogBlacklist =&TBlacklist{}

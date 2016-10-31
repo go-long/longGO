@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"strings"
 	"strconv"
-	"github.com/labstack/echo"
+	"github.com/go-long/echo"
 //	"github.com/labstack/echo/middleware"
 	"reflect"
 	"path"
