@@ -71,4 +71,8 @@ func FileMD5(filename string)(string,error ) {
 		return hex.EncodeToString(md5h.Sum(nil)) ,nil //md5
 	}
 	return "",inerr
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> aed07c202442780969261914801d1809a56db823
