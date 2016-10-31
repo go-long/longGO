@@ -4,6 +4,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"crypto/md5"
+	"io"
+	"encoding/hex"
 )
 
 //获取程序路径
@@ -57,4 +60,15 @@ func GetDirectoryFiles(root string) (files []os.FileInfo, err error){
 func FileExist(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil || os.IsExist(err)
+}
+
+//获取文件MD5
+func FileMD5(filename string)(string,error ) {
+	file, inerr := os.Open(filename)
+	if inerr == nil {
+		md5h := md5.New()
+		io.Copy(md5h, file)
+		return hex.EncodeToString(md5h.Sum(nil)) ,nil //md5
+	}
+	return "",inerr
 }

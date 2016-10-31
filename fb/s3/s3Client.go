@@ -27,7 +27,7 @@ type (
 	  SecretKey string  `form_widget:"text"   sql:"type:varchar(50)" valid:"Required"`
 	  BucketName string `form_widget:"text"  sql:"type:varchar(50)" valid:"Required"`
 	  S3Endpoint string `form_widget:"text"  sql:"type:varchar(50)" valid:"Required"`
-	  Acl       string ` form_widget:"select" form_choices:"|private|私有||public-read|所有人可读||public-read-write|所有人可读写||authenticated-read|authenticated-read||bucket-owner-read|bucket-owner-read||bucket-owner-full-control|bucket-owner-full-control "  sql:"type:varchar(20)" valid:"Required"`
+	  Acl       string ` gorm:"default:'private'" form_widget:"select" form_choices:"|private|私有||public-read|所有人可读||public-read-write|所有人可读写||authenticated-read|authenticated-read||bucket-owner-read|bucket-owner-read||bucket-owner-full-control|bucket-owner-full-control "  sql:"type:varchar(20)" valid:"Required"`
 	  Region string  //RegionName:"us-east-1"
        }
 )
@@ -67,12 +67,9 @@ func (s *S3Client) Bucket() (*s3.Bucket,error) {
 
 	//如果bucket不存在,创建bucket
 	if err := bucket.PutBucket(s3.ACL(s.config.Acl)); err != nil {
-		fmt.Println("777")
-		//log.Fatal(err)
 		 return nil,err
 
 	}
-	fmt.Println("888")
 	return bucket,nil
 }
 
@@ -107,7 +104,7 @@ func (s *S3Client) PutFile(filename string,key string,progressFunc... reader.Pro
 		progressR.DrawFunc=progressFunc[0]
 	}
 
-	fmt.Println("s3 upload key:",key)
+
 
 	if f.Size()>64*1024*1024{// *1024{
 		fmt.Println("s3 Multi Upload")
