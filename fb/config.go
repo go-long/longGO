@@ -10,7 +10,7 @@ import (
 
 
 	"github.com/go-long/longGO/fb/goIni"
-"github.com/labstack/gommon/log"
+"github.com/go-long/gommon/log"
 	"github.com/go-long/longGO/fb/db"
 )
 
