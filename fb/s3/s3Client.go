@@ -4,14 +4,12 @@ import (
 	//"github.com/aws/aws-sdk-go/aws"
 	//"github.com/aws/aws-sdk-go/aws/session"
 	//"github.com/aws/aws-sdk-go/service/s3/s3manager"
-
 	"github.com/go-long/goamz/aws"
 	"github.com/go-long/goamz/s3"
 	"github.com/go-long/longGO/fb/reader"
 	"os"
 	"time"
 	"fmt"
-
 )
 
 
@@ -73,6 +71,8 @@ func (s *S3Client) Bucket() (*s3.Bucket,error) {
 	return bucket,nil
 }
 
+
+
 func (s *S3Client) PutFile(filename string,key string,progressFunc... reader.ProgressReaderCallbackFunc) error{
 	f, er := os.Stat(filename)
 	if er != nil {
@@ -95,27 +95,38 @@ func (s *S3Client) PutFile(filename string,key string,progressFunc... reader.Pro
 
 	//shortName:=filepath.Base(filename)
 	//fmt.Println("short:",shortName)
+	var multi  *s3.Multi
 	progressR := &reader.ReaderSeek{
 		Reader: afile,
 		Size:   f.Size(),
+		DrawFunc: func(m_progress int64, m_size int64,m_speed string) error{
+			if len(progressFunc)>0{
+				er:=progressFunc[0](m_progress,m_size,m_speed)
+				if er!=nil && multi!=nil {
+					multi.PutCancel()
+					return  er
+				}
+			}
+			return nil
+		},
 	}
 
-	if len(progressFunc)>0{
-		progressR.DrawFunc=progressFunc[0]
-	}
+
+
 
 
 
 	if f.Size()>64*1024*1024{// *1024{
 		fmt.Println("s3 Multi Upload")
 		//文件大于64M,必须Multi方式
-		multi, err := b.InitMulti(key, "application/octet-stream", s3.ACL(s.config.Acl))
+		multi, err = b.InitMulti(key, "application/octet-stream", s3.ACL(s.config.Acl))
 		if err != nil {
 			return err
 		}
 		defer multi.Abort()
 
 		parts, err1 := multi.PutAll(progressR, s.sliceSize)
+
 		if err1 != nil {
 			return err1
 		}
@@ -143,3 +154,7 @@ func (s *S3Client)GetSignedURL(path string,duration time.Duration)string{
 	url:=b.SignedURL(path, time.Now().Add(duration))
 	return url
 }
+
+
+
+

@@ -62,6 +62,7 @@ func (r *Reader) Read(p []byte) (int, error) {
 		r.finishProgress()
 	}
 
+
 	return n, err
 }
 
